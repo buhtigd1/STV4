@@ -56,11 +56,23 @@ def main():
     print("Parsing playlist...")
     entries = parse_m3u(source)
 
+    # Separate EPL channels first
+    epl_blocks = []
+    other_blocks = []
+    for block in entries:
+        if "[english premier league]" in block[0].lower():
+            epl_blocks.append(block)
+        else:
+            other_blocks.append(block)
+
+    ordered_entries = epl_blocks + other_blocks
+
     print(f"Total channels found: {len(entries)}")
+    print(f"EPL channels prioritized: {len(epl_blocks)}")
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(HEADER + "\n")
-        for block in entries:
+        for block in ordered_entries:
             for idx, line in enumerate(block):
                 if idx == 0:
                     line = clean_extinf(line)
@@ -71,6 +83,7 @@ def main():
         for entry in log_entries:
             logf.write(entry + "\n")
         logf.write(f"✅ Done: saved to {OUTPUT_FILE}\n")
+        logf.write(f"EPL channels placed on top: {len(epl_blocks)}\n")
 
     print(f"✅ Done: saved to {OUTPUT_FILE}, log written to {LOG_FILE}")
 
