@@ -1,9 +1,10 @@
 import requests
+import re
 from datetime import datetime
 
 SOURCE_URL = "https://raw.githubusercontent.com/tongxunlu/super/main/live.m3u"
 
-OUTPUT_FILE = "stv4.m3u"
+OUTPUT_FILE = "stv.m3u"
 LOG_FILE    = "stv4.log"
 
 HEADER = '#EXTM3U url-tvg=""'
@@ -37,6 +38,10 @@ def parse_m3u(content):
             i += 1
     return entries
 
+def strip_group_title(line: str) -> str:
+    # Remove only group-title="..."
+    return re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
+
 def main():
     log_entries = [f"Run started at {datetime.now().isoformat()}"]
 
@@ -51,7 +56,9 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(HEADER + "\n")
         for block in entries:
-            for line in block:
+            for idx, line in enumerate(block):
+                if idx == 0 and line.startswith("#EXTINF"):
+                    line = strip_group_title(line)
                 f.write(line + "\n")
 
     with open(LOG_FILE, "w", encoding="utf-8") as logf:
