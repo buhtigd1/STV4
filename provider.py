@@ -38,15 +38,6 @@ def parse_m3u(content):
             i += 1
     return entries
 
-def clean_extinf(line):
-    # Remove unwanted attributes
-    line = re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
-    line = re.sub(r'\s*tvg-id="[^"]+"', '', line, flags=re.IGNORECASE)
-    line = re.sub(r'\s*tvg-name="[^"]+"', '', line, flags=re.IGNORECASE)
-    line = re.sub(r'\s*tvg-logo="[^"]+"', '', line, flags=re.IGNORECASE)
-    line = line.replace("|", "").replace(",,", ",")
-    return line
-
 def main():
     log_entries = [f"Run started at {datetime.now().isoformat()}"]
 
