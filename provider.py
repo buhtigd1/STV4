@@ -4,7 +4,7 @@ from datetime import datetime
 
 SOURCE_URL = "https://raw.githubusercontent.com/tongxunlu/super/main/live.m3u"
 
-OUTPUT_FILE = "stv.m3u"
+OUTPUT_FILE = "stv4.m3u"
 LOG_FILE    = "stv4.log"
 
 HEADER = '#EXTM3U url-tvg=""'
@@ -38,9 +38,10 @@ def parse_m3u(content):
             i += 1
     return entries
 
-def strip_group_title(line: str) -> str:
-    # Remove ONLY group-title="..."
-    return re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
+def clean_extinf(line):
+    # Remove unwanted attributes
+    line = re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
+    return line
 
 def main():
     log_entries = [f"Run started at {datetime.now().isoformat()}"]
@@ -51,20 +52,34 @@ def main():
     print("Parsing playlist...")
     entries = parse_m3u(source)
 
+    # Separate EPL channels first
+    epl_blocks = []
+    other_blocks = []
+    for block in entries:
+        if "[english premier league]" in block[0].lower():
+            epl_blocks.append(block)
+        else:
+            other_blocks.append(block)
+
+    ordered_entries = epl_blocks + other_blocks
+
     print(f"Total channels found: {len(entries)}")
+    print(f"EPL channels prioritized: {len(epl_blocks)}")
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(HEADER + "\n")
-        for block in entries:
-            for line in block:
-                if line.startswith("#EXTINF"):
-                    line = strip_group_title(line)
+        for block in ordered_entries:
+            for idx, line in enumerate(block):
+                if idx == 0:
+                    line = clean_extinf(line)
                 f.write(line + "\n")
 
+    # Always write a log file
     with open(LOG_FILE, "w", encoding="utf-8") as logf:
         for entry in log_entries:
             logf.write(entry + "\n")
         logf.write(f"✅ Done: saved to {OUTPUT_FILE}\n")
+        logf.write(f"EPL channels placed on top: {len(epl_blocks)}\n")
 
     print(f"✅ Done: saved to {OUTPUT_FILE}, log written to {LOG_FILE}")
 
