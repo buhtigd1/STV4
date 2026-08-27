@@ -39,7 +39,7 @@ def parse_m3u(content):
     return entries
 
 def strip_group_title(line: str) -> str:
-    # Remove only group-title="..."
+    # Remove ONLY group-title="..."
     return re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
 
 def main():
@@ -57,7 +57,7 @@ def main():
         f.write(HEADER + "\n")
         for block in entries:
             for idx, line in enumerate(block):
-                if idx == 0 and line.startswith("#EXTINF"):
+                if line.startswith("#EXTINF"):
                     line = strip_group_title(line)
                 f.write(line + "\n")
 
