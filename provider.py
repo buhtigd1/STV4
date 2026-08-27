@@ -3,7 +3,7 @@ from datetime import datetime
 
 SOURCE_URL = "https://raw.githubusercontent.com/tongxunlu/super/main/live.m3u"
 
-OUTPUT_FILE = "stv.m3u"
+OUTPUT_FILE = "stv4.m3u"
 LOG_FILE    = "stv4.log"
 
 HEADER = '#EXTM3U url-tvg=""'
