@@ -41,6 +41,7 @@ def parse_m3u(content):
 def clean_extinf(line):
     # Remove unwanted attributes
     line = re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
+    line = re.sub(r'\s*tvg-name="[^"]+"', '', line, flags=re.IGNORECASE)
     return line
 
 def main():
