@@ -56,7 +56,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(HEADER + "\n")
         for block in entries:
-            for idx, line in enumerate(block):
+            for line in block:
                 if line.startswith("#EXTINF"):
                     line = strip_group_title(line)
                 f.write(line + "\n")
