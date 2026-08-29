@@ -236,6 +236,8 @@ https://g006-lin-it-cmaf-prd-sn.pcdn07.cssott02.com/v~1-0-0_e~1787562417_f~0_g~1
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=d202e00c4caa89b88f32f45f94eb094c:52ce12b7f78d4fedaca01fa3f127b69f
 https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/kjtuyjgps1/out/v1/a33f356b57744981b0ec8681a485d8f4/cenc.mpd
+#EXTINF:-1,Birmingham City vs Bristol City - Sky Sports+
+https://tmaxapp.site/sky95sdfas/sky1.m3u8
 #EXTINF:-1,Manchester City vs Bournemouth - SPORTSCAST
 https://live.kinescopecdn.net/on-air/5bf2c07e-3604-42cf-959a-67ed8914ffd5/dd15b105-8d98-47a5-9f1c-4e1b50847cf7/master.m3u8
 #EXTINF:-1,Hull City vs Manchester United - USA TV
@@ -428,8 +430,6 @@ https://hls.live123.fans/live/4563517.m3u8?|Referer=http://www.fawanews.sc/&Orig
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=d9623774ac5c8c351aafe97c5fe70267:5164e6d05164a2d65fa8fcc962aa4861
 https://a166aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd
-#EXTINF:-1,Birmingham City vs Bristol City - Sky Sports+
-https://tmaxapp.site/sky95sdfas/sky1.m3u8
 #EXTINF:-1,Preston North End vs Wolverhampton - CBS SPORTS
 https://chatgpt.hereisman.net/playlist/55000/load-playlist?|Referer=https://gooz.aapmains.net
 #EXTINF:-1,Preston North End vs Wolverhampton - TFLIX LIVE
