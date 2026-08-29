@@ -38,7 +38,15 @@ PRIORITY = [
     "espn eng",
     "espn deportes",
     "fancode",
-    "fancode aq"
+    "fancode aq",
+    # Formula 1 related
+    "formula 1",
+    "apple tv hdr",
+    "driver tracker",
+    "driver data",
+    "tsn 1 fhd",
+    "sky sports",   # generic Sky F1
+    "sky f1 it"
 ]
 
 def download(url):
