@@ -5,12 +5,12 @@ from datetime import datetime
 SOURCE_URL = "https://raw.githubusercontent.com/tongxunlu/super/main/live.m3u"
 
 OUTPUT_FILE = "stv4.m3u"
-LOG_FILE    = "stv4.log"
+LOG_FILE = "stv4.log"
 
 HEADER = '#EXTM3U url-tvg=""'
 
 PRIORITY = [
-    "sky premier legue",   # typo preserved
+    "sky premier legue",
     "sky sports pl",
     "sky sport nz",
     "sky sport aq",
@@ -39,13 +39,12 @@ PRIORITY = [
     "espn deportes",
     "fancode",
     "fancode aq",
-    # Formula 1 related
     "formula 1",
     "apple tv hdr",
     "driver tracker",
     "driver data",
     "tsn 1 fhd",
-    "sky sports",   # generic Sky F1
+    "sky sports",
     "sky f1 it"
 ]
 
@@ -55,35 +54,61 @@ def download(url):
         r.raise_for_status()
         return r.text
     except requests.RequestException as e:
-        print(f"❌ Failed: {url}\n{e}")
+        print(f"Failed: {url}\n{e}")
         return None
 
 def parse_m3u(content):
     if not content:
         return []
+
     lines = content.splitlines()
     entries = []
     i = 0
+
     while i < len(lines):
         line = lines[i].strip()
+
         if line.startswith("#EXTINF"):
             block = [line]
             j = i + 1
+
             while j < len(lines):
                 next_line = lines[j].strip()
                 block.append(next_line)
+
                 if not next_line.startswith("#"):
                     break
+
                 j += 1
+
             entries.append(block)
             i = j
         else:
             i += 1
+
     return entries
 
 def clean_extinf(line):
+    # remove attributes
     line = re.sub(r'\s*group-title="[^"]+"', '', line, flags=re.IGNORECASE)
     line = re.sub(r'\s*tvg-name="[^"]+"', '', line, flags=re.IGNORECASE)
+
+    # remove all match titles:
+    # Ipswich Town vs Sunderland -
+    # Everton vs Crystal Palace -
+    # Hull City vs Manchester United -
+    # Team A v Team B -
+    # Team A versus Team B -
+    line = re.sub(
+        r'([^,]*?\b(?:vs|v|versus)\b[^-]*-\s*)',
+        '',
+        line,
+        flags=re.IGNORECASE
+    )
+
+    # cleanup spaces
+    line = re.sub(r'\s+', ' ', line).strip()
+
     return line
 
 def sort_entries(entries):
@@ -91,52 +116,67 @@ def sort_entries(entries):
     others_count = 0
 
     def priority_index(block):
+        nonlocal others_count
+
         line = block[0].lower()
+
         for idx, keyword in enumerate(PRIORITY):
             if keyword in line:
                 counts[keyword] += 1
                 return idx
-        nonlocal others_count
+
         others_count += 1
         return len(PRIORITY)
 
     sorted_entries = sorted(entries, key=priority_index)
+
     return sorted_entries, counts, others_count
 
 def main():
-    log_entries = [f"Run started at {datetime.now().isoformat()}"]
+    log_entries = [
+        f"Run started at {datetime.now().isoformat()}"
+    ]
 
     print("Downloading playlist...")
+
     source = download(SOURCE_URL)
     if source is None:
         return
 
     print("Parsing playlist...")
+
     entries = parse_m3u(source)
 
     print("Sorting channels...")
-    ordered_entries, counts, others_count = sort_entries(entries)
 
-    print(f"Total channels found: {len(entries)}")
+    ordered_entries, counts, others_count = sort_entries(entries)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(HEADER + "\n")
+
         for block in ordered_entries:
             for idx, line in enumerate(block):
+
                 if idx == 0:
                     line = clean_extinf(line)
+
                 f.write(line + "\n")
 
     with open(LOG_FILE, "w", encoding="utf-8") as logf:
         for entry in log_entries:
             logf.write(entry + "\n")
-        logf.write(f"✅ Done: saved to {OUTPUT_FILE}\n")
+
+        logf.write(f"Done: saved to {OUTPUT_FILE}\n")
+        logf.write(f"Total channels: {len(entries)}\n")
         logf.write("Channels sorted by priority list\n")
+
         for keyword, count in counts.items():
             logf.write(f"{keyword}: {count} channels\n")
+
         logf.write(f"others: {others_count} channels\n")
 
-    print(f"✅ Done: saved to {OUTPUT_FILE}, log written to {LOG_FILE}")
+    print(f"Done: saved to {OUTPUT_FILE}")
+    print(f"Log written to {LOG_FILE}")
 
 if __name__ == "__main__":
     main()
